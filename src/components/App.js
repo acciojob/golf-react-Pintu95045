@@ -1,57 +1,52 @@
-import React, { Component } from "react";
-import "../styles/App.css"; 
+import React, { Component, useState } from "react";
+import '../styles/App.css';
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showBall: false,
-      ballPosition: 0,
+    constructor(props) {
+        super(props)
+        this.state = {
+            renderBall: false,
+            posi : 0,
+            ballPosition: { left: "0px" }
+        };
+        this.renderChoice = this.renderBallOrButton.bind(this)
+        this.buttonClickHandler = this.buttonClickHandler.bind(this)
     };
+
+    buttonClickHandler() {
+        this.setState({ renderBall: true });
+   }
+    renderBallOrButton() {
+		if (this.state.renderBall) {
+		    return <div className="ball" style={this.state.ballPosition}></div>
+		} else {
+		    return <button className="start" onClick={this.buttonClickHandler} >Start</button>
+		}
     }
-    
-buttonClickHandler = () => {
-  this.setState({ showBall: true });
-};
 
-
-
-  handleKeyDown = (event) => {
-    if (event.key === "ArrowRight" || event.keyCode === 39) {
-      this.setState((prevState) => ({
-        ballPosition: prevState.ballPosition + 5,
-      }));
+    // bind ArrowRight keydown event
+    componentDidMount() {
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "ArrowRight" || event.keyCode === 39) {
+                this.setState((prevState) => {
+                    const newLeft = prevState.posi + 5;
+                    return {
+                        posi: newLeft,
+                        ballPosition: { left: `${newLeft}px` }
+                    };
+                });
+            }
+        });
     }
-  };
 
-  componentDidMount() {
-    document.addEventListener("keydown", this.handleKeyDown);
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener("keydown", this.handleKeyDown);
-  }
-
-  renderChoice = () => {
-    if (this.state.showBall) {
-      return (
-        <div
-          className="ball"
-          style={{ left: this.state.ballPosition + "px" }}
-        ></div>
-      );
-    } else {
-      return (
-        <button className="start" onClick={this.buttonClickHandler}>
-          Start
-        </button>
-      );
+    render() {
+        return (
+            <div className="playground">
+                {this.renderBallOrButton()}
+            </div>
+        )
     }
-  };
-
-  render() {
-    return <div className="App">{this.renderChoice()}</div>;
-  }
 }
+
 
 export default App;
